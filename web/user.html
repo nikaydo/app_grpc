@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Панель пользователя</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-6">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl p-6 shadow-md">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Панель пользователя</h1>
+
+    <!-- Кнопка создания токена -->
+    <div class="flex justify-center mb-6">
+      <button id="create-token" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+        ➕ Создать токен
+      </button>
+    </div>
+
+    <!-- Список токенов -->
+    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Ваши токены</h2>
+    <ul id="token-list" class="space-y-3"></ul>
+  </div>
+
+  <script>
+    async function loadTokens() {
+      const res = await fetch('/user/tokens');
+      const data = await res.json();
+      const list = document.getElementById('token-list');
+      list.innerHTML = '';
+
+      data.tokens.forEach(token => {
+        const el = document.createElement('li');
+        el.className = "flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-sm";
+
+        el.innerHTML = `
+          <code class="text-sm break-all text-gray-700">${token}</code>
+          <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" onclick="deleteToken('${token}')">
+            🗑 Удалить
+          </button>
+        `;
+
+        list.appendChild(el);
+      });
+    }
+
+    async function deleteToken(token) {
+      const confirmed = confirm("Вы уверены, что хотите удалить токен?");
+      if (!confirmed) return;
+
+      const res = await fetch('/user/token', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token })
+      });
+
+      if (res.ok) {
+        loadTokens();
+      } else {
+        const err = await res.text();
+        alert("Ошибка удаления токена: " + err);
+      }
+    }
+
+    document.getElementById('create-token').addEventListener('click', async () => {
+      const res = await fetch('/user/token', { method: 'GET' });
+        loadTokens();
+      if (res.ok) {
+        const newToken = await res.json();
+        loadTokens();
+      } else {
+        const err = await res.text();
+        alert("Ошибка создания токена: " + err);
+      }
+    });
+
+    loadTokens();
+  </script>
+</body>
+</html>

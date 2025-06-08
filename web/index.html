@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>SignIn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">SignIn</h2>
+    <div id="error-msg" class="text-red-600 text-sm text-center mb-4"></div>
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label for="login" class="block text-sm font-medium text-gray-700">Login</label>
+        <input type="text" id="login" name="login" required class="w-full p-2 border border-gray-300 rounded">
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" required class="w-full p-2 border border-gray-300 rounded">
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Enter</button>
+    </form>
+    <p class="text-center text-sm mt-4">
+      Dont have account?
+      <a href="/register" class="text-blue-600 hover:underline">SignUp</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorDiv = document.getElementById('error-msg');
+      errorDiv.textContent = '';
+
+      const login = document.getElementById('login').value;
+      const pass = document.getElementById('password').value;
+
+      const res = await fetch('/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, pass })
+      });
+
+      if (res.ok) {
+        window.location.href = '/user';
+      } else {
+        const data = await res.text();
+        errorDiv.textContent = data || 'Login error';
+      }
+    });
+  </script>
+</body>
+</html>
