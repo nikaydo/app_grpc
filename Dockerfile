@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main ./cmd/main
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
@@ -15,6 +15,8 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=builder /app/main .
+COPY .env ./
+COPY ./web ./web
 
 EXPOSE 8080 50051 50052
 CMD ["./main"]
