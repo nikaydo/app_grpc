@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"main/internal/config"
-	"main/internal/database"
 	GRPc "main/internal/grpc"
 	s "main/internal/server"
 	"net/http"
@@ -15,22 +15,15 @@ import (
 
 func main() {
 	Env := config.ReadEnv()
-	err := Env.SetTimeout()
-	if err != nil {
-		log.Fatal(err)
-	}
-	db, err := database.InitDB(Env)
-	if err != nil {
-		log.Fatal(err)
-	}
-	auth := GRPc.Run()
-	server := s.ServerInit(Env, db, auth)
+	auth := GRPc.RunAuth(fmt.Sprintf("%s:%s", Env.EnvMap["AUTH_HOST"], Env.EnvMap["AUTH_PORT"]))
+	apiToken := GRPc.RunApiToken(fmt.Sprintf("%s:%s", Env.EnvMap["APITOKEN_HOST"], Env.EnvMap["APITOKEN_PORT"]))
+	server := s.ServerInit(Env, auth, apiToken)
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	go func() {
-		log.Println("Starting server on :8080")
+		log.Printf("Starting server on %s:%s", Env.EnvMap["HOST"], Env.EnvMap["PORT"])
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Could not listen on :8080: %v\n", err)
+			log.Fatalf("Could not listen on %s:%s: %v\n", Env.EnvMap["HOST"], Env.EnvMap["PORT"], err)
 		}
 	}()
 	<-stop

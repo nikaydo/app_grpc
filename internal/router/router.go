@@ -1,12 +1,12 @@
 package router
 
 import (
-	"main/internal/database"
 	h "main/internal/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	apiTokens "github.com/nikaydo/grpc-contract/gen/apiToken"
 	auth "github.com/nikaydo/grpc-contract/gen/auth"
 )
 
@@ -15,8 +15,8 @@ type Router struct {
 	Auth     auth.AuthClient
 }
 
-func RouterInit(db database.Database, g auth.AuthClient) Router {
-	return Router{Handlers: h.Handlers{Db: db, Auth: g}}
+func RouterInit(g auth.AuthClient, t apiTokens.ApiTokenClient) Router {
+	return Router{Handlers: h.Handlers{Auth: g, ApiTokens: t}}
 }
 
 func (rt *Router) Router() http.Handler {

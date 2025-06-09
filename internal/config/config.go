@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -21,28 +20,4 @@ func ReadEnv() Env {
 		log.Fatal("Error loading .env file:", err)
 	}
 	return Env{EnvMap: envMap}
-}
-
-func (db *Env) SetTimeout() error {
-	t, err := strconv.Atoi(db.EnvMap["MANGODB_TIMEOUT_CONNECT"])
-	if err != nil {
-		return err
-	}
-	db.TimeoutConnect = t
-	t, err = strconv.Atoi(db.EnvMap["MANGODB_TIMEOUT_READ"])
-	if err != nil {
-		return err
-	}
-	db.TimeoutRead = t
-	t, err = strconv.Atoi(db.EnvMap["MANGODB_TIMEOUT_WRITE"])
-	if err != nil {
-		return err
-	}
-	db.TimeoutWrite = t
-	t, err = strconv.Atoi(db.EnvMap["MANGODB_TIMEOUT_DISCONNECT"])
-	if err != nil {
-		return err
-	}
-	db.TimeoutDisconnect = t
-	return nil
 }

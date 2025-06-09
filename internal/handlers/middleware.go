@@ -45,13 +45,12 @@ func (h Handlers) CheckJWT(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		cockie, err := strconv.Atoi(h.Db.ENV.EnvMap["COCKIE_TTL"])
+		cockie, err := strconv.Atoi(h.Env.EnvMap["COCKIE_TTL"])
 		if err != nil {
 			log.Println("Error get COCKIE_TTL:", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		http.SetCookie(w, MakeCookie("jwt", token.JwtToken, time.Duration(cockie*int(time.Minute))))
-		log.Println("Token refreshed successfully")
 		next.ServeHTTP(w, r)
 	})
 }

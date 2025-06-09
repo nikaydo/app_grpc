@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "50051:50051"
+
+  service-api-tokens:
+    build:
+      context: ./Service-api-tokens
+    ports:
+      - "50052:50052"
+
+  main-app:
+    build:
+      context: ./main-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - service-api-tokens
