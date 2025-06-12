@@ -12,6 +12,15 @@ services:
       - "15432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:6
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodata:/data/db
+
   auth-service:
     build:
       context: ./auth-service
@@ -28,6 +37,14 @@ services:
     depends_on:
       - postgres
 
+  video-service:
+    build:
+      context: ./video-service
+    ports:
+      - "50053:50053"
+    depends_on:
+      - mongodb
+
   main-app:
     build:
       context: .
@@ -36,6 +53,8 @@ services:
     depends_on:
       - auth-service
       - service-api-tokens
+      - video-service
 
 volumes:
   pgdata:
+  mongodata:

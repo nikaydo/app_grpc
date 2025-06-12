@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"main/internal/config"
 	GRPc "main/internal/grpc"
@@ -15,9 +14,9 @@ import (
 
 func main() {
 	Env := config.ReadEnv()
-	auth := GRPc.RunAuth(fmt.Sprintf("%s:%s", Env.EnvMap["AUTH_HOST"], Env.EnvMap["AUTH_PORT"]))
-	apiToken := GRPc.RunApiToken(fmt.Sprintf("%s:%s", Env.EnvMap["APITOKEN_HOST"], Env.EnvMap["APITOKEN_PORT"]))
-	server := s.ServerInit(Env, auth, apiToken)
+	serv := GRPc.Service{}
+	serv.Init(Env)
+	server := s.ServerInit(Env, serv)
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	go func() {

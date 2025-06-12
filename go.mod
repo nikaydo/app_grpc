@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi v1.5.5
 	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/nikaydo/grpc-contract v0.0.3
+	github.com/nikaydo/grpc-contract v0.0.9
 	google.golang.org/grpc v1.73.0
 )
 

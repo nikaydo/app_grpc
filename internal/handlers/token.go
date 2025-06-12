@@ -26,14 +26,13 @@ func (h *Handlers) Token(w http.ResponseWriter, r *http.Request) {
 			writeErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
-		t, err := h.ApiTokens.Create(context.Background(), &apiTokens.CreateRequest{Id: result.Id})
+		_, err = h.ApiTokens.Create(context.Background(), &apiTokens.CreateRequest{Id: result.Id})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		fmt.Println(t.Token)
 	case http.MethodDelete:
-		var t models.Token
+		var t models.VideoData
 		if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
 			writeErrorResponse(w, err, http.StatusBadRequest)
 			return
@@ -89,7 +88,7 @@ func (h *Handlers) VerifyToken(w http.ResponseWriter, r *http.Request) {
 		writeErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
-	_, err = w.Write([]byte(fmt.Sprintf("%t", result.Result)))
+	_, err = w.Write(fmt.Appendf(nil, "%t", result.Result))
 	if err != nil {
 		log.Println("error writing response", err)
 	}

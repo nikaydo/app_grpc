@@ -1,6 +1,7 @@
 package router
 
 import (
+	"main/internal/config"
 	h "main/internal/handlers"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	apiTokens "github.com/nikaydo/grpc-contract/gen/apiToken"
 	auth "github.com/nikaydo/grpc-contract/gen/auth"
+	"github.com/nikaydo/grpc-contract/gen/video"
 )
 
 type Router struct {
@@ -15,8 +17,8 @@ type Router struct {
 	Auth     auth.AuthClient
 }
 
-func RouterInit(g auth.AuthClient, t apiTokens.ApiTokenClient) Router {
-	return Router{Handlers: h.Handlers{Auth: g, ApiTokens: t}}
+func RouterInit(g auth.AuthClient, t apiTokens.ApiTokenClient, v video.VideoClient, e config.Env) Router {
+	return Router{Handlers: h.Handlers{Auth: g, ApiTokens: t, Vid: v, Env: e}}
 }
 
 func (rt *Router) Router() http.Handler {
@@ -34,6 +36,14 @@ func (rt *Router) Router() http.Handler {
 		r.Get("/token", rt.Handlers.Token)
 		r.Delete("/token", rt.Handlers.Token)
 		r.Get("/tokens", rt.Handlers.GetTokens)
+	})
+
+	r.Route("/api", func(r chi.Router) {
+		r.Use(rt.Handlers.CheckApiToken)
+		r.Post("/video", rt.Handlers.Video)
+		r.Get("/search/video", rt.Handlers.SearchVideo)
+		r.Delete("/video", rt.Handlers.Video)
+		r.Get("/video/stream", rt.Handlers.Stream)
 	})
 
 	r.Post("/signup", rt.Handlers.SignUp)

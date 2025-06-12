@@ -1,23 +1,30 @@
 package models
 
+import "github.com/nikaydo/grpc-contract/gen/video"
+
 type Video struct {
-	Title string `bson:"title"`
-	Creat string `bson:"created_at"`
-	Type  string `bson:"type"`
-	Wtf   string `bson:"wtf"`
+	Title string `json:"title"`
+	Vid   []byte `json:"Vid"`
+	Token string `json:"Token"`
 }
 
 type User struct {
-	Id           int    `json:"id,omitempty" bson:"id,omitempty"`
-	Login        string `json:"login" bson:"login"`
-	Pass         string `json:"pass" bson:"pass"`
-	RefreshToken string `json:"refresh,omitempty" bson:"refresh,omitempty"`
+	Id           int    `json:"id,omitempty"`
+	Login        string `json:"login"`
+	Pass         string `json:"pass"`
+	RefreshToken string `json:"refresh,omitempty"`
 }
 
 type Tokens struct {
 	Token []string `json:"tokens"`
 }
 
-type Token struct {
+type VideoData struct {
 	Token string `json:"token"`
+	Uuid  string `json:"uuid,omitempty"`
+	Name  string `json:"name,omitempty"`
+}
+
+type VideoList struct {
+	Video []*video.SavedVideo `json:"title,omitempty"`
 }

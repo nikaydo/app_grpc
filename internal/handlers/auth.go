@@ -24,6 +24,11 @@ func (h *Handlers) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, MakeCookie("jwt", n.Token, time.Duration(10*time.Minute)))
 	w.WriteHeader(http.StatusOK)
+	_, err = w.Write([]byte(n.Token))
+	if err != nil {
+		writeErrorResponse(w, err, http.StatusBadRequest)
+		return
+	}
 }
 
 func (h *Handlers) SignUp(w http.ResponseWriter, r *http.Request) {

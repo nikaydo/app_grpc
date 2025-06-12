@@ -111,7 +111,7 @@ func TestHandlers_Token_DELETE(t *testing.T) {
 		ApiTokens: mockApiTokens,
 	}
 
-	tokenToDelete := models.Token{Token: "token-to-delete"}
+	tokenToDelete := models.VideoData{Token: "token-to-delete"}
 	bodyBytes, _ := json.Marshal(tokenToDelete)
 	req := httptest.NewRequest(http.MethodDelete, "/token", bytes.NewReader(bodyBytes))
 	w := httptest.NewRecorder()
@@ -161,7 +161,7 @@ func TestHandlers_Token_DELETE_DeleteError(t *testing.T) {
 		ApiTokens: mockApiTokens,
 	}
 
-	tokenToDelete := models.Token{Token: "token-to-delete"}
+	tokenToDelete := models.VideoData{Token: "token-to-delete"}
 	bodyBytes, _ := json.Marshal(tokenToDelete)
 	req := httptest.NewRequest(http.MethodDelete, "/token", bytes.NewReader(bodyBytes))
 	w := httptest.NewRecorder()
